@@ -73,9 +73,21 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     NSLog(@"%@",self.photos);
+    NSString *photoTitle, *photoDescription;
+
+    photoTitle = [[self.photos objectAtIndex:indexPath.row]valueForKeyPath:FLICKR_PHOTO_TITLE];
+    photoDescription = [[self.photos objectAtIndex:indexPath.row]valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
     
+    if (photoTitle){
+        cell.textLabel.text = photoTitle;
+        cell.detailTextLabel.text = photoDescription;
+    }
+    else if (photoDescription){
+        cell.textLabel.text = photoTitle;
+    }
+    else
+        cell.textLabel.text = @"Unknown";
     
-        
     return cell;
 }
 

@@ -21,6 +21,7 @@
 {
     if (_places != places) {
         _places = places;
+        [self.tableView reloadData];
     }
 }
 
@@ -106,10 +107,12 @@
      */
 }
 
+#pragma mark - Segue 
+
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"List Of Photos"]) {
-        [segue.destinationViewController setPlace:[self.places objectAtIndex:[sender row]]];
+        [segue.destinationViewController setPlace:[self.places objectAtIndex:[self.tableView indexPathForCell:sender].row]];
     }
 }
 @end
