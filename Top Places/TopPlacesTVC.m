@@ -80,11 +80,13 @@
     static NSString *CellIdentifier = @"Place Description";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    // Configure the cell...
     
-    NSLog(@"%@", [self.places objectAtIndex:indexPath.row]);
+    NSArray *orderedPlaces = [self.places sortedArrayUsingComparator:
+                              ^(id obj1, id obj2) {
+                                  return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
+                              }];
     
-    NSString *placeDescription = [[self.places objectAtIndex:indexPath.row] valueForKeyPath:@"_content"];
+    NSString *placeDescription = [[orderedPlaces objectAtIndex:indexPath.row] valueForKeyPath:@"_content"];
     NSArray *dividedDescription = [placeDescription componentsSeparatedByString:@", "];
     cell.textLabel.text = [dividedDescription objectAtIndex:CITY];
     cell.detailTextLabel.text = [[dividedDescription objectAtIndex:PROVINCE] stringByAppendingFormat:@", %@",[dividedDescription objectAtIndex:COUNTRY]];
@@ -143,5 +145,4 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
 }
-
 @end
