@@ -1,39 +1,30 @@
 //
-//  TopPlacesTVC.m
+//  PhotosDescriptionTVC.m
 //  Top Places
 //
-//  Created by Oscar Cortez on 8/10/12.
+//  Created by Oscar Cortez on 8/11/12.
 //  Copyright (c) 2012 Oscar Cortez. All rights reserved.
 //
 
-#import "TopPlacesTVC.h"
 #import "PhotosDescriptionTVC.h"
 
-@interface TopPlacesTVC ()
+@interface PhotosDescriptionTVC ()
 
 @end
 
-@implementation TopPlacesTVC
+@implementation PhotosDescriptionTVC
+@synthesize photos = _photos;
+@synthesize place = _place;
 
-@synthesize places = _places;
+#define MAX_RESULTS 10
 
--(void) setPlaces:(NSArray *)places
+-(NSArray *) photos
 {
-    if (_places != places) {
-        _places = places;
-    }
-}
-
--(NSArray *) places
-{
-    if (!_places) {
-        return [[FlickrFetcher topPlaces]sortedArrayUsingComparator:
-                ^(id obj1, id obj2) {
-                    return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
-                }];
+    if (!_photos) {
+        return [FlickrFetcher photosInPlace:self.place maxResults:MAX_RESULTS];
     }
     else
-        return _places;
+        return _photos;
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -70,25 +61,21 @@
 
 #pragma mark - Table view data source
 
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.places count];
+    return [self.photos count];
 }
-
-#define CITY 0
-#define PROVINCE 1
-#define COUNTRY 2
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Place Description";
+    static NSString *CellIdentifier = @"Photo Description";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
-    NSString *placeDescription = [[self.places objectAtIndex:indexPath.row] valueForKeyPath:@"_content"];
-    NSArray *dividedDescription = [placeDescription componentsSeparatedByString:@", "];
-    cell.textLabel.text = [dividedDescription objectAtIndex:CITY];
-    cell.detailTextLabel.text = [[dividedDescription objectAtIndex:PROVINCE] stringByAppendingFormat:@", %@",[dividedDescription objectAtIndex:COUNTRY]];
+    NSLog(@"%@",self.photos);
     
+    
+        
     return cell;
 }
 
@@ -106,10 +93,4 @@
      */
 }
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"List Of Photos"]) {
-        [segue.destinationViewController setPlace:[self.places objectAtIndex:[sender row]]];
-    }
-}
 @end
