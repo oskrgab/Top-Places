@@ -1,5 +1,5 @@
 //
-//  TopPlacesViewController.h
+//  TopPlacesTVC.h
 //  Top Places
 //
 //  Created by Oscar Cortez on 8/10/12.
@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FlickrFetcher.h"
 
-@interface TopPlacesViewController : UIViewController
+@interface TopPlacesTVC : UITableViewController
+
+@property (nonatomic, strong) NSArray *places; // Model
 
 @end
