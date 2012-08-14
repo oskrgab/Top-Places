@@ -7,9 +7,11 @@
 //
 
 #import "PhotosDescriptionTVC.h"
+#import "PhotoViewController.h"
+#import "FlickrFetcher.h"
 
 @interface PhotosDescriptionTVC ()
-
+@property (nonatomic,strong) NSArray *photos; // Collection of an array of Dictionaries with the photo's description
 @end
 
 @implementation PhotosDescriptionTVC
@@ -96,13 +98,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    
+}
+
+#pragma mark - Segue
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"Show Photo"]) {
+        [segue.destinationViewController setPhotoInformation:[self.photos objectAtIndex:[self.tableView indexPathForCell:sender].row]];
+    }
 }
 
 @end

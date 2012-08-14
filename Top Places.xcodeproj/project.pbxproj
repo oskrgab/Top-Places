@@ -23,6 +23,7 @@
 		AD8D4C1B15D5994200B69FA6 /* TopPlacesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8D4C1A15D5994200B69FA6 /* TopPlacesTVC.m */; };
 		ADAD732615D578DF00055A77 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = ADAD732515D578DF00055A77 /* FlickrFetcher.m */; };
 		ADC5D3BB15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ADC5D3BA15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m */; };
+		ADF4FB3C15D9F1E100249BF4 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4FB3B15D9F1E100249BF4 /* PhotoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		ADAD732515D578DF00055A77 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FlickrFetcher.m; path = ../FlickrFetcher.m; sourceTree = "<group>"; };
 		ADC5D3B915D6FEB200ABCEC8 /* PhotosDescriptionTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosDescriptionTVC.h; sourceTree = "<group>"; };
 		ADC5D3BA15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosDescriptionTVC.m; sourceTree = "<group>"; };
+		ADF4FB3A15D9F1E100249BF4 /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoViewController.h; sourceTree = "<group>"; };
+		ADF4FB3B15D9F1E100249BF4 /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 		AD88B0B015D5747A003B892C /* Top Places */ = {
 			isa = PBXGroup;
 			children = (
+				ADF4FB3A15D9F1E100249BF4 /* PhotoViewController.h */,
+				ADF4FB3B15D9F1E100249BF4 /* PhotoViewController.m */,
 				AD8D4C1915D5994200B69FA6 /* TopPlacesTVC.h */,
 				AD8D4C1A15D5994200B69FA6 /* TopPlacesTVC.m */,
 				ADC5D3B915D6FEB200ABCEC8 /* PhotosDescriptionTVC.h */,
@@ -280,6 +285,7 @@
 				ADAD732615D578DF00055A77 /* FlickrFetcher.m in Sources */,
 				AD8D4C1B15D5994200B69FA6 /* TopPlacesTVC.m in Sources */,
 				ADC5D3BB15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m in Sources */,
+				ADF4FB3C15D9F1E100249BF4 /* PhotoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

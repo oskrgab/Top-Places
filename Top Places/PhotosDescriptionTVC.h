@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FlickrFetcher.h"
 
-@interface PhotosDescriptionTVC : UITableViewController
 
-@property (nonatomic,strong) NSArray *photos;
-@property (nonatomic,strong) NSDictionary *place;
+
+@interface PhotosDescriptionTVC : UITableViewController 
+
+@property (nonatomic,strong) NSDictionary * place;
 
 @end
