@@ -9,7 +9,7 @@
 #import "PhotoViewController.h"
 #import "FlickrFetcher.h"
 
-@interface PhotoViewController ()
+@interface PhotoViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @end
@@ -40,7 +40,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.scrollView.delegate = self;
     self.imageView.image = [self imageForPhoto:self.photoInformation];
+    self.navigationItem.title = [self.photoInformation valueForKey:FLICKR_PHOTO_TITLE];
+    self.scrollView.contentSize = self.imageView.image.size;
+    self.imageView.frame = CGRectMake(0, 0, self.imageView.image.size.width, self.imageView.image.size.height);
 }
 
 - (void)viewDidUnload
@@ -53,7 +57,11 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
+-(UIView *) viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return self.imageView;
+}
 @end

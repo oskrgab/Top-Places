@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
-
+#import "FlickrFetcher.h"
+#define RECENT_PHOTOS_KEY @"PhotosDescriptionTVC.RecentPhotos"
 
 @interface PhotosDescriptionTVC : UITableViewController 
 
 @property (nonatomic,strong) NSDictionary * place;
+@property (nonatomic,strong) NSArray *photos; // Collection of Dictionaries with the photo's description
 
 @end

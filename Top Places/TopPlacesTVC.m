@@ -9,7 +9,7 @@
 #import "TopPlacesTVC.h"
 #import "PhotosDescriptionTVC.h"
 
-@interface TopPlacesTVC ()
+@interface TopPlacesTVC () 
 
 @end
 
@@ -46,9 +46,17 @@
     return self;
 }
 
+- (void) awakeFromNib
+{
+    [super awakeFromNib];
+    self.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemTopRated tag:1];
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -66,7 +74,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
 }
 
 #pragma mark - Table view data source
@@ -84,12 +92,19 @@
 {
     static NSString *CellIdentifier = @"Place Description";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    }
     
-    NSString *placeDescription = [[self.places objectAtIndex:indexPath.row] valueForKeyPath:@"_content"];
+    NSString *placeDescription = [[self.places objectAtIndex:indexPath.row] valueForKeyPath:FLICKR_PLACE_NAME];
     NSArray *dividedDescription = [placeDescription componentsSeparatedByString:@", "];
     cell.textLabel.text = [dividedDescription objectAtIndex:CITY];
-    cell.detailTextLabel.text = [[dividedDescription objectAtIndex:PROVINCE] stringByAppendingFormat:@", %@",[dividedDescription objectAtIndex:COUNTRY]];
     
+    if ([dividedDescription count] == 3)
+        cell.detailTextLabel.text = [[dividedDescription objectAtIndex:PROVINCE] stringByAppendingFormat:@", %@",[dividedDescription objectAtIndex:COUNTRY]];
+    else
+        cell.detailTextLabel.text = [dividedDescription objectAtIndex:PROVINCE];
+                                     
     return cell;
 }
 
@@ -98,13 +113,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    
 }
 
 #pragma mark - Segue 
@@ -115,4 +124,6 @@
         [segue.destinationViewController setPlace:[self.places objectAtIndex:[self.tableView indexPathForCell:sender].row]];
     }
 }
+
+
 @end

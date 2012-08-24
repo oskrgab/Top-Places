@@ -1,57 +1,57 @@
 //
-//  PhotosDescriptionTVC.m
+//  RecentPhotosTVC.m
 //  Top Places
 //
-//  Created by Oscar Cortez on 8/11/12.
+//  Created by Oscar Cortez on 8/19/12.
 //  Copyright (c) 2012 Oscar Cortez. All rights reserved.
 //
 
-#import "PhotosDescriptionTVC.h"
+#import "RecentPhotosTVC.h"
 #import "PhotoViewController.h"
 
-@interface PhotosDescriptionTVC ()
+@interface RecentPhotosTVC ()
+
 @end
 
-@implementation PhotosDescriptionTVC
-@synthesize photos = _photos;
-@synthesize place = _place;
+@implementation RecentPhotosTVC
 
-#define MAX_RESULTS 10
-
--(NSArray *) photos
+- (NSArray *) getRecentPhotos
 {
-    if (!_photos) {
-        return [FlickrFetcher photosInPlace:self.place maxResults:MAX_RESULTS];
-    }
-    else
-        return _photos;
+    NSArray *recentPhotos = [[NSUserDefaults standardUserDefaults] objectForKey:RECENT_PHOTOS_KEY];
+    return recentPhotos;
 }
-
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithStyle:style];
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
     }
     return self;
 }
 
+-(void) awakeFromNib
+{
+    [super awakeFromNib];
+    self.tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemRecents tag:2];
+
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    self.photos = [self getRecentPhotos];
+    [self.tableView reloadData];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    	// Do any additional setup after loading the view.
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -69,14 +69,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Photo Description";
+    static NSString *CellIdentifier = @"Recent Photo Description";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     NSString *photoTitle, *photoDescription;
-
+    
     photoTitle = [[self.photos objectAtIndex:indexPath.row]valueForKeyPath:FLICKR_PHOTO_TITLE];
     photoDescription = [[self.photos objectAtIndex:indexPath.row]valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
     
@@ -91,44 +91,29 @@
         cell.textLabel.text = @"Unknown";
     
     return cell;
+
+
 }
 
 
 #pragma mark - Table view delegate
 
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSMutableArray *recentPhotos = [[defaults objectForKey:RECENT_PHOTOS_KEY] mutableCopy];
-    NSDictionary *foundPhoto;
-    
-    if (!recentPhotos) {
-        recentPhotos = [NSMutableArray array];
-    }
-    else {
-        for (NSDictionary *aPhoto in recentPhotos) {
-            if ([[aPhoto valueForKey:FLICKR_PHOTO_ID] isEqualToString:[[self.photos objectAtIndex:indexPath.row] valueForKey:FLICKR_PHOTO_ID]]) {
-                foundPhoto = aPhoto;
-            }
-        }
-    }
-    
-    [recentPhotos removeObject:foundPhoto];
-    [recentPhotos insertObject:[self.photos objectAtIndex:indexPath.row] atIndex:0];
-    [defaults setObject:recentPhotos forKey:RECENT_PHOTOS_KEY];
-    [defaults synchronize];
-        
     
 }
+
 
 #pragma mark - Segue
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"Show Photo"]) {
+    if ([segue.identifier isEqualToString:@"Show Recent Photo"]) {
         [segue.destinationViewController setPhotoInformation:[self.photos objectAtIndex:[self.tableView indexPathForCell:sender].row]];
     }
+
 }
+
+
 
 @end
