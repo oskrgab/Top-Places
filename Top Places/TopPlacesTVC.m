@@ -10,10 +10,12 @@
 #import "PhotosDescriptionTVC.h"
 
 @interface TopPlacesTVC () 
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 
 @end
 
 @implementation TopPlacesTVC
+@synthesize spinner = _spinner;
 
 @synthesize places = _places;
 
@@ -25,17 +27,6 @@
     }
 }
 
--(NSArray *) places
-{
-    if (!_places) {
-        return [[FlickrFetcher topPlaces]sortedArrayUsingComparator:
-                ^(id obj1, id obj2) {
-                    return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
-                }];
-    }
-    else
-        return _places;
-}
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -53,23 +44,35 @@
     
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    dispatch_queue_t placesDownloadQueue = dispatch_queue_create("places downloader", NULL);
+    dispatch_async(placesDownloadQueue, ^{
+        self.places = [[FlickrFetcher topPlaces]sortedArrayUsingComparator:
+                       ^(id obj1, id obj2) {
+                           return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
+                       }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.spinner stopAnimating];
+            self.spinner.hidden = YES;
+        });
+    });
+    
+    dispatch_release(placesDownloadQueue);
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.spinner.color = [UIColor grayColor];
+    [self.spinner startAnimating];
 }
 
 - (void)viewDidUnload
 {
+    [self setSpinner:nil];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

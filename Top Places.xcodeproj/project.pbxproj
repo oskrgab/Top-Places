@@ -22,6 +22,7 @@
 		AD88B0D915D5747B003B892C /* Top_PlacesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AD88B0D815D5747B003B892C /* Top_PlacesTests.m */; };
 		AD8D4C1B15D5994200B69FA6 /* TopPlacesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AD8D4C1A15D5994200B69FA6 /* TopPlacesTVC.m */; };
 		ADAD732615D578DF00055A77 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = ADAD732515D578DF00055A77 /* FlickrFetcher.m */; };
+		ADB57AE215EAA8850042CA87 /* DataCache.m in Sources */ = {isa = PBXBuildFile; fileRef = ADB57AE115EAA8850042CA87 /* DataCache.m */; };
 		ADC428BB15E1C1130043619D /* RecentPhotosTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ADC428BA15E1C1130043619D /* RecentPhotosTVC.m */; };
 		ADC5D3BB15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ADC5D3BA15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m */; };
 		ADF4FB3C15D9F1E100249BF4 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF4FB3B15D9F1E100249BF4 /* PhotoViewController.m */; };
@@ -61,6 +62,8 @@
 		ADAD732315D578DF00055A77 /* FlickrAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlickrAPIKey.h; path = ../FlickrAPIKey.h; sourceTree = "<group>"; };
 		ADAD732415D578DF00055A77 /* FlickrFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlickrFetcher.h; path = ../FlickrFetcher.h; sourceTree = "<group>"; };
 		ADAD732515D578DF00055A77 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FlickrFetcher.m; path = ../FlickrFetcher.m; sourceTree = "<group>"; };
+		ADB57AE015EAA8850042CA87 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataCache.h; path = "Top Places/DataCache.h"; sourceTree = "<group>"; };
+		ADB57AE115EAA8850042CA87 /* DataCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataCache.m; path = "Top Places/DataCache.m"; sourceTree = "<group>"; };
 		ADC428B915E1C1130043619D /* RecentPhotosTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentPhotosTVC.h; sourceTree = "<group>"; };
 		ADC428BA15E1C1130043619D /* RecentPhotosTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecentPhotosTVC.m; sourceTree = "<group>"; };
 		ADC5D3B915D6FEB200ABCEC8 /* PhotosDescriptionTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosDescriptionTVC.h; sourceTree = "<group>"; };
@@ -96,6 +99,8 @@
 		AD88B09B15D5747A003B892C = {
 			isa = PBXGroup;
 			children = (
+				ADB57AE015EAA8850042CA87 /* DataCache.h */,
+				ADB57AE115EAA8850042CA87 /* DataCache.m */,
 				AD88B0B015D5747A003B892C /* Top Places */,
 				AD88B0D115D5747B003B892C /* Top PlacesTests */,
 				AD88B0A915D5747A003B892C /* Frameworks */,
@@ -292,6 +297,7 @@
 				ADC5D3BB15D6FEB200ABCEC8 /* PhotosDescriptionTVC.m in Sources */,
 				ADF4FB3C15D9F1E100249BF4 /* PhotoViewController.m in Sources */,
 				ADC428BB15E1C1130043619D /* RecentPhotosTVC.m in Sources */,
+				ADB57AE215EAA8850042CA87 /* DataCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

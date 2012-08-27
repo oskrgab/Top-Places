@@ -10,23 +10,23 @@
 #import "PhotoViewController.h"
 
 @interface PhotosDescriptionTVC ()
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @end
 
 @implementation PhotosDescriptionTVC
+@synthesize spinner = _spinner;
 @synthesize photos = _photos;
 @synthesize place = _place;
 
-#define MAX_RESULTS 10
+#define MAX_RESULTS 50
 
--(NSArray *) photos
+- (void) setPhotos:(NSArray *)photos
 {
-    if (!_photos) {
-        return [FlickrFetcher photosInPlace:self.place maxResults:MAX_RESULTS];
+    if (_photos != photos) {
+        _photos = photos;
+        [self.tableView reloadData];
     }
-    else
-        return _photos;
 }
-
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -36,19 +36,30 @@
     return self;
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    dispatch_queue_t photoDataDownloadQueue = dispatch_queue_create("Photo Data Downloader", NULL);
+    dispatch_async(photoDataDownloadQueue, ^{
+        self.photos = [FlickrFetcher photosInPlace:self.place maxResults:MAX_RESULTS];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.spinner stopAnimating];
+            self.spinner.hidden = YES;
+        });
+    });
+    dispatch_release(photoDataDownloadQueue);
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.spinner.color = [UIColor grayColor];
+    [self.spinner startAnimating];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)viewDidUnload
 {
+    [self setSpinner:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

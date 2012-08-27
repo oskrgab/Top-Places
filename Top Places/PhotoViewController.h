@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FlickrFetcher.h"
+
 
 @interface PhotoViewController : UIViewController
 @property (nonatomic,strong) NSDictionary *photoInformation;

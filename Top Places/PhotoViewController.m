@@ -7,16 +7,17 @@
 //
 
 #import "PhotoViewController.h"
-#import "FlickrFetcher.h"
 
 @interface PhotoViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @end
 
 @implementation PhotoViewController
 @synthesize scrollView = _scrollView;
 @synthesize imageView = _imageView;
+@synthesize spinner = _spinner;
 
 
 #define CUSTOM_FORMAT FlickrPhotoFormatLarge
@@ -37,20 +38,38 @@
     return self;
 }
 
+- (void) viewWillAppear:(BOOL)animated
+{
+    self.scrollView.delegate = self;
+    dispatch_queue_t photoDownloader = dispatch_queue_create("photo downloader", NULL);
+    dispatch_async(photoDownloader, ^{
+        UIImage *image = [self imageForPhoto:self.photoInformation];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.spinner stopAnimating];
+            self.spinner.hidden = YES;
+            self.imageView.image = image;
+            self.navigationItem.title = [self.photoInformation valueForKey:FLICKR_PHOTO_TITLE];
+            self.imageView.frame = CGRectMake(0, 0, self.imageView.image.size.width, self.imageView.image.size.height);
+            self.scrollView.contentSize = self.imageView.image.size;
+
+        });
+    });
+    dispatch_release(photoDownloader);
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.scrollView.delegate = self;
-    self.imageView.image = [self imageForPhoto:self.photoInformation];
-    self.navigationItem.title = [self.photoInformation valueForKey:FLICKR_PHOTO_TITLE];
-    self.scrollView.contentSize = self.imageView.image.size;
-    self.imageView.frame = CGRectMake(0, 0, self.imageView.image.size.width, self.imageView.image.size.height);
+    self.spinner.color = [UIColor grayColor];
+    [self.spinner startAnimating];
+    
 }
 
 - (void)viewDidUnload
 {
     [self setImageView:nil];
     [self setScrollView:nil];
+    [self setSpinner:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }

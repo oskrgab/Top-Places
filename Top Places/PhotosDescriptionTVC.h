@@ -14,5 +14,4 @@
 
 @property (nonatomic,strong) NSDictionary * place;
 @property (nonatomic,strong) NSArray *photos; // Collection of Dictionaries with the photo's description
-
 @end
