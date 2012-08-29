@@ -7,6 +7,7 @@
 //
 
 #import "PhotoViewController.h"
+#import "DataCache.h"
 
 @interface PhotoViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -24,7 +25,17 @@
 
 -(UIImage *) imageForPhoto: (NSDictionary *) photo 
 {
-    NSData *imageData = [NSData dataWithContentsOfURL:[FlickrFetcher urlForPhoto:photo format:CUSTOM_FORMAT]];
+    DataCache *myCache = [[DataCache alloc] init];
+    NSData *imageData;
+    
+    if ([myCache URLForFile:[photo valueForKey:FLICKR_PHOTO_ID]]) {
+        imageData = [NSData dataWithContentsOfURL:[myCache URLForFile:[photo valueForKey:FLICKR_PHOTO_ID]]];
+    }
+    else {
+        imageData = [NSData dataWithContentsOfURL:[FlickrFetcher urlForPhoto:photo format:CUSTOM_FORMAT]];
+        [myCache cacheData:imageData withName:[photo valueForKey:FLICKR_PHOTO_ID]];
+    }
+    
     UIImage *image = [UIImage imageWithData:imageData];
     return image;
 }

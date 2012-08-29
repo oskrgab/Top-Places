@@ -15,6 +15,7 @@
 @synthesize maxCacheSize = _maxCacheSize;
 
 #define DEFAULT_SIZE 10000000 // 10 megabytes
+#define PHOTO_CACHE_PATH @"Photo-Cache"
 
 - (double) maxCacheSize
 {
@@ -38,6 +39,9 @@
         }
             
     }
+    NSFileManager *cacheManager = [NSFileManager defaultManager];
+    NSLog(@"Number of files in cache: %u",[[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
+    NSLog(@"contents of cache: %@",[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
 }
 
 - (NSURL *) URLForFile:(NSString *)fileName
@@ -60,7 +64,9 @@
 + (NSURL *) myCacheDirectory
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
-    NSURL *directory = [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    
+    NSURL *directory = [[[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]] URLByAppendingPathComponent:PHOTO_CACHE_PATH];
+    [cacheManager createDirectoryAtURL:directory withIntermediateDirectories:NO attributes:nil error:nil];
     
     //NSLog(@"My cache directory: \n%@",directory);
     
@@ -92,11 +98,14 @@
         return [date1 compare:date2];
     }];
     
-    // NSLog(@"Before removing the Oldest file in Cache: \n%@",contentsOfCache);
+    NSLog(@"Before removing the Oldest file in Cache: \n%@",contentsOfCache);
+    NSLog(@"Number of files in cache BEFORE removing oldest file: %u",[contentsOfCache count]);
     
     [cacheManager removeItemAtURL:[contentsOfCache objectAtIndex:0] error:nil];
     
-    // NSLog(@"After removing the Oldest file in Cache: \n%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
+    NSLog(@"After removing the Oldest file in Cache: \n%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
+    NSLog(@"Number of files in cache AFTER removing oldest file: %u",[[cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
+
     
 }
 
@@ -108,7 +117,7 @@
         size += [[[file resourceValuesForKeys:[NSArray arrayWithObject:NSURLFileSizeKey] error:nil] objectForKey:NSURLFileSizeKey] doubleValue];
     }
     
-    // NSLog(@"%f",size);
+    NSLog(@"size of cache: %f",size/1000000);
     
     return size;
     
