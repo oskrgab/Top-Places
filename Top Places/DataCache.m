@@ -13,14 +13,19 @@
 
 @implementation DataCache
 
+#define BUNDLE_ID @"Oscar.Top-Places"
+
 + (void) cacheData:(NSData *)data
 {
-    NSURL *cacheDirectory = [DataCache cacheDirectory];
-    [data writeToURL:cacheDirectory atomically:NO];
+    NSFileManager *cacheManager = [NSFileManager defaultManager];
+    NSString *cacheDirectoryPath = [[self myCacheDirectory] path];
+    
+    [cacheManager createFileAtPath:cacheDirectoryPath contents:data attributes:nil];
+    
 
 }
 
-+ (NSURL *) cacheDirectory
++ (NSURL *) myCacheDirectory
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
     return [[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
@@ -29,7 +34,7 @@
 + (NSArray *) contentsOfCache
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
-    NSURL *cacheDirectory = [DataCache cacheDirectory];
+    NSURL *cacheDirectory = [self myCacheDirectory];
     NSArray *keysForPropertiesInURL = [NSArray arrayWithObjects:NSURLCreationDateKey, NSURLFileSizeKey, nil];
     return [cacheManager contentsOfDirectoryAtURL:cacheDirectory includingPropertiesForKeys:keysForPropertiesInURL options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
 }
@@ -37,7 +42,7 @@
 + (void) removeOldestDataInCache
 {
     NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSArray *contentsOfCache = [DataCache contentsOfCache];
+    NSArray *contentsOfCache = [self contentsOfCache];
     
     contentsOfCache = [contentsOfCache sortedArrayUsingComparator:^NSComparisonResult (id obj1, id obj2){
         NSDate *date1, *date2;
@@ -53,7 +58,7 @@
 + (double) sizeOfDataInCache
 {
     double size = 0;
-    NSArray *contentsOfCache = [DataCache contentsOfCache];
+    NSArray *contentsOfCache = [self contentsOfCache];
     for (NSURL *file in contentsOfCache) {
         size += [[[file resourceValuesForKeys:[NSArray arrayWithObject:NSURLFileSizeKey] error:nil] objectForKey:NSURLFileSizeKey] doubleValue];
     }
@@ -65,7 +70,7 @@
 + (BOOL) cacheHasData:(NSData *)data
 {
     NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSArray *contentsOfCache = [DataCache contentsOfCache];
+    NSArray *contentsOfCache = [self contentsOfCache];
     NSString *path;
     BOOL hasData = NO;
     
