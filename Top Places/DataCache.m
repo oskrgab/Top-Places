@@ -14,7 +14,6 @@
 @implementation DataCache
 @synthesize maxCacheSize = _maxCacheSize;
 
-#define BUNDLE_ID @"Oscar.Top-Places"
 #define DEFAULT_SIZE 10000000 // 10 megabytes
 
 - (double) maxCacheSize
@@ -25,13 +24,14 @@
     return _maxCacheSize;
 }
 
-- (void) cacheData:(NSData *)data
+- (void) cacheData:(NSData *)data withName:(NSString *)name
 {
     NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSString *cacheDirectoryPath = [[DataCache myCacheDirectory] path];
+    NSString *filePath = [[[DataCache myCacheDirectory] URLByAppendingPathComponent:name]path];
     
-    [cacheManager createFileAtPath:cacheDirectoryPath contents:data attributes:nil];
-    
+    if ([DataCache sizeOfDataInCache] < self.maxCacheSize) {
+        [cacheManager createFileAtPath:filePath contents:data attributes:nil];
+    }
 
 }
 
@@ -44,7 +44,7 @@
 + (NSURL *) myCacheDirectory
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
-    NSURL *directory = [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:BUNDLE_ID];
+    NSURL *directory = [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
     
     //NSLog(@"%@",directory);
     

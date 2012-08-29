@@ -12,7 +12,7 @@
 
 @property (nonatomic) double maxCacheSize;
 
-- (void) cacheData:(NSData *) data;
+- (void) cacheData:(NSData *) data withName: (NSString *) name;
 - (NSURL *) URLForFile: (NSString *) fileName;
 
 @end
