@@ -42,7 +42,18 @@
 
 - (NSURL *) URLForFile:(NSString *)fileName
 {
+    NSFileManager *cacheManager = [NSFileManager defaultManager];
+    NSArray *contents = [cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    NSURL *file;
     
+    // Looking for the right file
+    for (NSURL *URLFile in contents) {
+        if ([[URLFile lastPathComponent] isEqualToString:fileName]) {
+            file = URLFile;
+        }
+    }
+    
+    return file;
 }
 
 
@@ -51,7 +62,7 @@
     NSFileManager *cacheManager =[NSFileManager defaultManager];
     NSURL *directory = [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
     
-    //NSLog(@"%@",directory);
+    //NSLog(@"My cache directory: \n%@",directory);
     
     return directory;
 }
@@ -81,11 +92,11 @@
         return [date1 compare:date2];
     }];
     
-    //NSLog(@"%@",contentsOfCache);
+    // NSLog(@"Before removing the Oldest file in Cache: \n%@",contentsOfCache);
     
     [cacheManager removeItemAtURL:[contentsOfCache objectAtIndex:0] error:nil];
     
-    //NSLog(@"%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
+    // NSLog(@"After removing the Oldest file in Cache: \n%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
     
 }
 
