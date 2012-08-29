@@ -10,10 +10,9 @@
 
 @interface DataCache : NSObject
 
-+ (void) cacheData:(NSData *) data;
-+ (NSArray *) contentsOfCache; // With creation date and file size properties included
-+ (void) removeOldestDataInCache;
-+ (double) sizeOfDataInCache;
-+ (BOOL) cacheHasData: (NSData *) data;
+@property (nonatomic) double maxCacheSize;
+
+- (void) cacheData:(NSData *) data;
+- (NSURL *) URLForFile: (NSString *) fileName;
 
 @end

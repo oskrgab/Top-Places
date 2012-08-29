@@ -12,31 +12,56 @@
 @end
 
 @implementation DataCache
+@synthesize maxCacheSize = _maxCacheSize;
 
 #define BUNDLE_ID @"Oscar.Top-Places"
+#define DEFAULT_SIZE 10000000 // 10 megabytes
 
-+ (void) cacheData:(NSData *)data
+- (double) maxCacheSize
+{
+    if (!_maxCacheSize)
+        _maxCacheSize = DEFAULT_SIZE;
+    
+    return _maxCacheSize;
+}
+
+- (void) cacheData:(NSData *)data
 {
     NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSString *cacheDirectoryPath = [[self myCacheDirectory] path];
+    NSString *cacheDirectoryPath = [[DataCache myCacheDirectory] path];
     
     [cacheManager createFileAtPath:cacheDirectoryPath contents:data attributes:nil];
     
 
 }
 
+- (NSURL *) URLForFile:(NSString *)fileName
+{
+    
+}
+
+
 + (NSURL *) myCacheDirectory
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
-    return [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:BUNDLE_ID];
+    NSURL *directory = [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:BUNDLE_ID];
+    
+    //NSLog(@"%@",directory);
+    
+    return directory;
 }
 
 + (NSArray *) contentsOfCache
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
     NSURL *cacheDirectory = [self myCacheDirectory];
-    NSArray *keysForPropertiesInURL = [NSArray arrayWithObjects:NSURLCreationDateKey, NSURLFileSizeKey, nil];
-    return [cacheManager contentsOfDirectoryAtURL:cacheDirectory includingPropertiesForKeys:keysForPropertiesInURL options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    NSArray *keysForPropertiesInURL = [NSArray arrayWithObjects:NSURLCreationDateKey, NSURLFileSizeKey,NSURLLocalizedNameKey, nil];
+    
+    NSArray *contents = [cacheManager contentsOfDirectoryAtURL:cacheDirectory includingPropertiesForKeys:keysForPropertiesInURL options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    
+    // NSLog(@"%@",contents);
+    
+    return contents;
 }
 
 + (void) removeOldestDataInCache
@@ -51,7 +76,11 @@
         return [date1 compare:date2];
     }];
     
+    //NSLog(@"%@",contentsOfCache);
+    
     [cacheManager removeItemAtURL:[contentsOfCache objectAtIndex:0] error:nil];
+    
+    //NSLog(@"%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
     
 }
 
@@ -63,28 +92,12 @@
         size += [[[file resourceValuesForKeys:[NSArray arrayWithObject:NSURLFileSizeKey] error:nil] objectForKey:NSURLFileSizeKey] doubleValue];
     }
     
+    // NSLog(@"%f",size);
+    
     return size;
     
 }
 
-+ (BOOL) cacheHasData:(NSData *)data
-{
-    NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSArray *contentsOfCache = [self contentsOfCache];
-    NSString *path;
-    BOOL hasData = NO;
-    
-    for (NSURL * file in contentsOfCache) {
-        if ([file isFileURL]) {
-            path = [file path];
-            NSData *cacheData = [cacheManager contentsAtPath:path];
-            if ([cacheData isEqualToData:data])
-                hasData = YES;
-            break;
-        }
-    }
-    
-    return hasData;
-}
+
 
 @end
