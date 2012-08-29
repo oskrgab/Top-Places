@@ -28,7 +28,7 @@
 + (NSURL *) myCacheDirectory
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
-    return [[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+    return [[[cacheManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject] URLByAppendingPathComponent:BUNDLE_ID];
 }
 
 + (NSArray *) contentsOfCache
