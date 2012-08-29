@@ -26,13 +26,18 @@
 
 - (void) cacheData:(NSData *)data withName:(NSString *)name
 {
-    NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSString *filePath = [[[DataCache myCacheDirectory] URLByAppendingPathComponent:name]path];
+    NSURL *fileURL = [[DataCache myCacheDirectory] URLByAppendingPathComponent:name];
     
-    if ([DataCache sizeOfDataInCache] < self.maxCacheSize) {
-        [cacheManager createFileAtPath:filePath contents:data attributes:nil];
+    if (![self URLForFile:name]) {
+        if ([DataCache sizeOfDataInCache] < self.maxCacheSize) {
+            [data writeToURL:fileURL atomically:NO];
+        }
+        else {
+            [DataCache removeOldestDataInCache];
+            [self cacheData:data withName:name];
+        }
+            
     }
-
 }
 
 - (NSURL *) URLForFile:(NSString *)fileName
