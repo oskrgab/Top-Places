@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FlickrFetcher.h"
 #define RECENT_PHOTOS_KEY @"PhotosDescriptionTVC.RecentPhotos"
 
 @interface PhotosDescriptionTVC : UITableViewController 

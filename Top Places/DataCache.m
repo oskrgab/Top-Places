@@ -39,9 +39,10 @@
         }
             
     }
-    NSFileManager *cacheManager = [NSFileManager defaultManager];
-    NSLog(@"Number of files in cache: %u",[[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
-    NSLog(@"contents of cache: %@",[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
+   
+    //NSFileManager *cacheManager = [NSFileManager defaultManager];
+    //NSLog(@"Number of files in cache: %u",[[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
+    //NSLog(@"contents of cache: %@",[cacheManager contentsOfDirectoryAtURL:[DataCache myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
 }
 
 - (NSURL *) URLForFile:(NSString *)fileName
@@ -77,7 +78,7 @@
 {
     NSFileManager *cacheManager =[NSFileManager defaultManager];
     NSURL *cacheDirectory = [self myCacheDirectory];
-    NSArray *keysForPropertiesInURL = [NSArray arrayWithObjects:NSURLCreationDateKey, NSURLFileSizeKey,NSURLLocalizedNameKey, nil];
+    NSArray *keysForPropertiesInURL = @[NSURLCreationDateKey, NSURLFileSizeKey,NSURLLocalizedNameKey];
     
     NSArray *contents = [cacheManager contentsOfDirectoryAtURL:cacheDirectory includingPropertiesForKeys:keysForPropertiesInURL options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
     
@@ -93,18 +94,18 @@
     
     contentsOfCache = [contentsOfCache sortedArrayUsingComparator:^NSComparisonResult (id obj1, id obj2){
         NSDate *date1, *date2;
-        date1 = [[obj1 resourceValuesForKeys:[NSArray arrayWithObject:NSURLCreationDateKey] error:nil]objectForKey:NSURLCreationDateKey];
-        date2 = [[obj2 resourceValuesForKeys:[NSArray arrayWithObject:NSURLCreationDateKey] error:nil]objectForKey:NSURLCreationDateKey];
+        date1 = [[obj1 resourceValuesForKeys:@[NSURLCreationDateKey] error:nil]objectForKey:NSURLCreationDateKey];
+        date2 = [[obj2 resourceValuesForKeys:@[NSURLCreationDateKey] error:nil]objectForKey:NSURLCreationDateKey];
         return [date1 compare:date2];
     }];
     
-    NSLog(@"Before removing the Oldest file in Cache: \n%@",contentsOfCache);
-    NSLog(@"Number of files in cache BEFORE removing oldest file: %u",[contentsOfCache count]);
+    //NSLog(@"Before removing the Oldest file in Cache: \n%@",contentsOfCache);
+    //NSLog(@"Number of files in cache BEFORE removing oldest file: %u",[contentsOfCache count]);
     
     [cacheManager removeItemAtURL:[contentsOfCache objectAtIndex:0] error:nil];
     
-    NSLog(@"After removing the Oldest file in Cache: \n%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
-    NSLog(@"Number of files in cache AFTER removing oldest file: %u",[[cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
+    //NSLog(@"After removing the Oldest file in Cache: \n%@", [cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil]);
+    //NSLog(@"Number of files in cache AFTER removing oldest file: %u",[[cacheManager contentsOfDirectoryAtURL:[self myCacheDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil] count]);
 
     
 }
@@ -114,10 +115,10 @@
     double size = 0;
     NSArray *contentsOfCache = [self contentsOfCache];
     for (NSURL *file in contentsOfCache) {
-        size += [[[file resourceValuesForKeys:[NSArray arrayWithObject:NSURLFileSizeKey] error:nil] objectForKey:NSURLFileSizeKey] doubleValue];
+        size += [[[file resourceValuesForKeys:@[NSURLFileSizeKey] error:nil] objectForKey:NSURLFileSizeKey] doubleValue];
     }
     
-    NSLog(@"size of cache: %f",size/1000000);
+    //NSLog(@"size of cache: %f",size/1000000);
     
     return size;
     

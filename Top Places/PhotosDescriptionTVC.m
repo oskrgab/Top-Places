@@ -8,8 +8,12 @@
 
 #import "PhotosDescriptionTVC.h"
 #import "PhotoViewController.h"
+#import "MapViewController.h"
+#import "PhotoAnnotations.h"
+#import "FlickrFetcher.h"
 
-@interface PhotosDescriptionTVC ()
+
+@interface PhotosDescriptionTVC () <MapViewControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @end
 
@@ -20,13 +24,32 @@
 
 #define MAX_RESULTS 50
 
+- (NSArray *) photosAnnotations
+{
+    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:[self.photos count]];
+    for (NSDictionary *photo in self.photos) {
+        [annotations addObject:[PhotoAnnotations annotationForPhoto:photo]];
+    }
+    
+    return annotations;
+}
+
 - (void) setPhotos:(NSArray *)photos
 {
     if (_photos != photos) {
         _photos = photos;
-        [self.tableView reloadData];
+        [self updateDetailViewController];
+        if (self.tableView.window) [self.tableView reloadData];
     }
 }
+
+-(void) updateDetailViewController
+{
+    
+}
+- (IBAction)mapButtonPressed:(id)sender
+{
+    }
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -49,11 +72,22 @@
     dispatch_release(photoDataDownloadQueue);
 }
 
+- (UIImage *) mapViewController:(MapViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation
+{
+    PhotoAnnotations *photoAnnotation = (PhotoAnnotations *) annotation;
+    NSURL *url = [FlickrFetcher urlForPhoto:photoAnnotation.photo format:FlickrPhotoFormatSquare];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    return [UIImage imageWithData:data];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.spinner.color = [UIColor grayColor];
     [self.spinner startAnimating];
+    NSString *city = [[[self.place valueForKey:FLICKR_PLACE_NAME] componentsSeparatedByString:@", "] objectAtIndex:0];
+    self.navigationItem.title = city;
+    
 
 }
 
@@ -137,9 +171,15 @@
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"Show Photo"]) {
+    if ([segue.identifier isEqualToString:@"Show Photo From List Of Photos"]) {
         [segue.destinationViewController setPhotoInformation:[self.photos objectAtIndex:[self.tableView indexPathForCell:sender].row]];
     }
+    
+    if ([segue.identifier isEqualToString:@"Show Photos in Map"]) {
+        [segue.destinationViewController setAnnotations:[self photosAnnotations]];
+        [segue.destinationViewController setDelegate:self];
+    }
+    
 }
 
 @end

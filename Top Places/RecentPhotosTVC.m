@@ -8,6 +8,7 @@
 
 #import "RecentPhotosTVC.h"
 #import "PhotoViewController.h"
+#import "FlickrFetcher.h"
 
 @interface RecentPhotosTVC ()
 

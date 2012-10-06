@@ -7,10 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FlickrFetcher.h"
 
 @interface TopPlacesTVC : UITableViewController
-
 @property (nonatomic, strong) NSArray *places; // Model
-
 @end

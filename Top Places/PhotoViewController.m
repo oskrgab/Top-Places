@@ -8,11 +8,16 @@
 
 #import "PhotoViewController.h"
 #import "DataCache.h"
+#import "VacationHelper.h"
+#import "Photo+Create.h"
+#import "VisitUnvisitButtonHelper.h"
+#import "FlickrFetcher.h"
 
 @interface PhotoViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) NSString *currentVacation;
 @end
 
 @implementation PhotoViewController
@@ -65,7 +70,14 @@
     [super viewDidLoad];
     self.spinner.color = [UIColor grayColor];
     [self.spinner startAnimating];
-    
+    if (self.currentVacation)
+        if (![VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation])
+            self.navigationItem.rightBarButtonItem.title = @"Visit";
+        else
+            self.navigationItem.rightBarButtonItem.title = @"Unvisit";
+    else
+        self.navigationItem.rightBarButtonItem.title = @"Visit";
+        
 }
 
 - (void)viewDidUnload
@@ -86,4 +98,22 @@
 {
     return self.imageView;
 }
+
+- (IBAction)visitUnvisitPressed:(UIBarButtonItem *)sender {
+    
+        // Choose a vacation from the url's of vacation in the directory, then use their localizedNameKey property in its URL to retrieve the vacation Name and open it
+    NSString *vacation = @"My Vacations";
+    self.currentVacation = vacation;
+    
+    if (![VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation]) {
+        [VisitUnvisitButtonHelper visitPhoto:self.photoInformation forVacation:self.currentVacation];
+        self.navigationItem.rightBarButtonItem.title = @"Unvisit";
+    }
+    else {
+        [VisitUnvisitButtonHelper unvisitPhoto:self.photoInformation forVacation:self.currentVacation];
+        self.navigationItem.rightBarButtonItem.title = @"Visit";
+    }
+    
+}
+
 @end

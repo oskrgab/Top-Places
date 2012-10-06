@@ -8,25 +8,81 @@
 
 #import "TopPlacesTVC.h"
 #import "PhotosDescriptionTVC.h"
+#import "PlaceAnnotations.h"
+#import "MapViewController.h"
+#import "PhotoViewController.h"
+#import "FlickrFetcher.h"
 
 @interface TopPlacesTVC () 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 
 @end
 
 @implementation TopPlacesTVC
-@synthesize spinner = _spinner;
 
 @synthesize places = _places;
+
+- (NSArray *) placesAnnotations
+{
+    NSMutableArray *annotations = [NSMutableArray arrayWithCapacity:[self.places count]];
+    for (NSDictionary *place in self.places) {
+        [annotations addObject:[PlaceAnnotations annotationForPlace:place]];
+    }
+    return annotations;
+}
 
 -(void) setPlaces:(NSArray *)places
 {
     if (_places != places) {
         _places = places;
-        [self.tableView reloadData];
+        [self updateDetailViewController];
+        if (self.tableView.window) [self.tableView reloadData];
     }
 }
 
+- (void) updateDetailViewController
+{
+    if ([[self.splitViewController.viewControllers lastObject] isKindOfClass:[UINavigationController class]]) {
+        if ([[[[self.splitViewController.viewControllers lastObject] viewControllers] objectAtIndex:0] isKindOfClass:[MapViewController class]]) {
+            [[[[self.splitViewController.viewControllers lastObject] viewControllers] objectAtIndex:0] setAnnotations:[self placesAnnotations]];
+        }
+    }
+    else {
+        MapViewController *mapVC = [[MapViewController alloc] init];
+        PhotoViewController *photoVC = [[PhotoViewController alloc]init];
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mapVC];
+        [navigationController addChildViewController:photoVC];
+        
+    }
+        
+}
+- (IBAction)mapButtonPressed:(id)sender
+{
+    
+}
+
+- (IBAction)refresh:(id)sender
+{
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [spinner startAnimating];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+    
+    dispatch_queue_t placesDownloadQueue = dispatch_queue_create("places downloader", NULL);
+    dispatch_async(placesDownloadQueue, ^{
+        NSArray *places = [[FlickrFetcher topPlaces]sortedArrayUsingComparator:
+                       ^(id obj1, id obj2) {
+                           return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
+                       }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.navigationItem.leftBarButtonItem = sender;
+            self.places = places;
+        });
+    });
+    
+    dispatch_release(placesDownloadQueue);
+
+    
+}
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -46,32 +102,16 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-    dispatch_queue_t placesDownloadQueue = dispatch_queue_create("places downloader", NULL);
-    dispatch_async(placesDownloadQueue, ^{
-        self.places = [[FlickrFetcher topPlaces]sortedArrayUsingComparator:
-                       ^(id obj1, id obj2) {
-                           return [[obj1 valueForKeyPath:@"_content"] compare:[obj2 valueForKeyPath:@"_content"]];
-                       }];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.spinner stopAnimating];
-            self.spinner.hidden = YES;
-        });
-    });
     
-    dispatch_release(placesDownloadQueue);
-
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.spinner.color = [UIColor grayColor];
-    [self.spinner startAnimating];
 }
 
 - (void)viewDidUnload
 {
-    [self setSpinner:nil];
     [super viewDidUnload];
 }
 
@@ -126,6 +166,10 @@
     if ([segue.identifier isEqualToString:@"List Of Photos"]) {
         [segue.destinationViewController setPlace:[self.places objectAtIndex:[self.tableView indexPathForCell:sender].row]];
     }
+    if ([segue.identifier isEqualToString:@"Show Places in Map"]) {
+        [segue.destinationViewController setAnnotations:[self placesAnnotations]];
+    }
+    
 }
 
 
