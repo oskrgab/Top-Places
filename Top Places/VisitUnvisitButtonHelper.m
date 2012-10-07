@@ -10,22 +10,25 @@
 
 @implementation VisitUnvisitButtonHelper
 
-+ (BOOL) isPhoto:(NSDictionary *)photo inVacation:(NSString *)vacationName
++ (void) isPhoto:(NSDictionary *)photo inVacation:(NSString *)vacationName successHandler:(success_handler_t)successHandler
 {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
     request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", [photo valueForKey:FLICKR_PHOTO_ID]];
     NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
     request.sortDescriptors = @[ descriptor ];
-    __block BOOL isInVacation = NO;
     
     [VacationHelper openVacation:vacationName usingBlock:^(UIManagedDocument *vacation) {
+        BOOL isInVacation;
         NSArray *matches = [vacation.managedObjectContext executeFetchRequest:request error:nil];
         if ([matches count] == 1) {
             isInVacation = YES;
+            successHandler(isInVacation);
+        }
+        else {
+            isInVacation = NO;
+            successHandler(isInVacation);
         }
     }];
-    
-    return isInVacation;
 }
 
 + (void) visitPhoto:(NSDictionary *)photo forVacation:(NSString *)vacationName

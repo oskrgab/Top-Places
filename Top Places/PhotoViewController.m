@@ -70,11 +70,13 @@
     [super viewDidLoad];
     self.spinner.color = [UIColor grayColor];
     [self.spinner startAnimating];
-    if (self.currentVacation)
-        if (![VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation])
-            self.navigationItem.rightBarButtonItem.title = @"Visit";
-        else
-            self.navigationItem.rightBarButtonItem.title = @"Unvisit";
+    if (self.currentVacation){
+        [VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation successHandler:^(BOOL success) {
+            if (success) self.navigationItem.rightBarButtonItem.title = @"Unvisit";
+            if (!success) self.navigationItem.rightBarButtonItem.title = @"Visit";
+
+        }];
+    }
     else
         self.navigationItem.rightBarButtonItem.title = @"Visit";
         
@@ -105,14 +107,16 @@
     NSString *vacation = @"My Vacations";
     self.currentVacation = vacation;
     
-    if (![VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation]) {
-        [VisitUnvisitButtonHelper visitPhoto:self.photoInformation forVacation:self.currentVacation];
-        self.navigationItem.rightBarButtonItem.title = @"Unvisit";
-    }
-    else {
-        [VisitUnvisitButtonHelper unvisitPhoto:self.photoInformation forVacation:self.currentVacation];
-        self.navigationItem.rightBarButtonItem.title = @"Visit";
-    }
+    [VisitUnvisitButtonHelper isPhoto:self.photoInformation inVacation:self.currentVacation successHandler:^(BOOL success) {
+        if (!success) {
+            [VisitUnvisitButtonHelper visitPhoto:self.photoInformation forVacation:self.currentVacation];
+            self.navigationItem.rightBarButtonItem.title = @"Unvisit";
+        }
+        else {
+            [VisitUnvisitButtonHelper unvisitPhoto:self.photoInformation forVacation:self.currentVacation];
+            if (!success) self.navigationItem.rightBarButtonItem.title = @"Visit";
+        }
+    }];
     
 }
 
